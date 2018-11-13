@@ -5,9 +5,28 @@
 #include<time.h>
 #define MAX 100
 
+#define STACKSIZE 6
+#define TRUE 1
+#define FALSE 0
+
 int currnodes=0,count=0;
 int i,s ,j,t,b,k,c,size;
 int a[MAX];
+
+struct message
+{
+    char message_data[100];
+    int hour[2];
+};
+
+struct stack
+{
+    int top;
+    int active;
+    struct message items[STACKSIZE];
+};
+
+typedef struct stack STACK;
 
 struct ad
 {
@@ -25,6 +44,156 @@ struct news_variables
 };
 
 typedef struct news_variables NV;
+
+void initialize_stacks(STACK *ps1, STACK *ps2)
+{
+    ps1->top = -1;
+    ps2->top = -1;
+
+    ps1->active = 1;
+    ps2->active = 0;
+
+    int i,j,size;
+    char ad[100];
+    int h1,h2;
+    printf("enter the number of ads\n");
+    scanf("%d",&size);
+    getchar();
+    for(i=0;i<size;i++)
+    {
+
+        printf("\nenter the advertisment you want to broadcast\n");
+        scanf("%[^\n]s",ad);
+        getchar();
+        printf("enter the timings when your ad should be displayed\n*****Note:An ad can be broadcasted twice a day*****\n");
+        scanf("%d",&h1);
+        scanf("%d",&h2);
+
+        ps1->top++;
+        strcpy(ps1->items[i].message_data,ad);
+        ps1->items[i].hour[0] = h1;
+        ps1->items[i].hour[1] = h2;
+        printf("Ad created\n");
+        getchar();
+
+    }
+
+}
+
+int empty(STACK *ps)
+{
+    if(ps->top == -1)
+        return TRUE;
+    else
+        return FALSE;
+}
+
+struct message pop(STACK *ps)
+{
+    struct message s;
+    strcpy(s.message_data,ps->items[ps->top].message_data);
+    s.hour[0] = ps->items[ps->top].hour[1];
+    s.hour[1] = ps->items[ps->top].hour[0];
+    ps->top --;
+    return s;
+}
+
+
+void view_current_message(STACK *ps1, STACK *ps2)
+{
+    if(ps1->active == 1)
+        peek(ps1);
+    else
+        peek(ps2);
+}
+
+void update_hour(STACK *ps1, STACK *ps2)
+{
+    struct message s;
+
+    if(ps1->active == 1)
+    {
+        s= pop(ps1);
+        push(ps2,s);
+
+        if(empty(ps1))
+        {
+            ps1->active = 0;
+            ps2->active = 1;
+        }
+    }
+    else
+    {
+        s = pop(ps2);
+        push(ps1, s);
+
+        if(empty(ps2))
+        {
+            ps2->active = 0;
+            ps1->active = 1;
+        }
+    }
+}
+
+void push(STACK * ps, struct message s)
+{
+
+    ps->top++;
+    strcpy(ps->items[ps->top].message_data,s.message_data);
+    ps->items[ps->top].hour[0] = s.hour[0];
+    ps->items[ps->top].hour[1] = s.hour[1];
+    return;
+}
+
+
+
+
+void peek( STACK *ps)
+{
+    printf("%s", ps->items[ps->top].message_data);
+    printf("%s%d", "\ntiming is ", ps->items[ps->top].hour[0]);
+    printf("\n\n\n");
+    return;
+}
+
+
+void print( STACK *ps1, STACK *ps2)
+{
+    int i = 0, j = 0;
+
+    if(ps1->active == 1)
+        printf("%s", "Stack1 is Active\n");
+    else
+        printf("%s", "Stack2 is Active\n");
+
+    if(empty(ps1))
+    {
+        printf("%s", "Stack1 is empty\n");
+    }
+    else
+    {
+        printf("%s", "\nThe stack elements of first stack are listed below:\n");
+        for(i = ps1->top ; i >= 0 ; i--)
+        {
+            printf("%s\n", ps1->items[i].message_data);
+        }
+    }
+
+    if(empty(ps2))
+    {
+        printf("%s", "\n\nStack2 is empty\n");
+    }
+    else
+    {
+        printf("%s", "\nThe stack elements of second stack are listed below:\n");
+        for(j = ps2->top ; j >= 0 ; j--)
+        {
+            printf("%s\n", ps2->items[j].message_data);
+        }
+
+    }
+}
+
 
 AD *append(AD * start,char data[],int position)
 {
@@ -1152,6 +1321,46 @@ for(i=1;i<=16;i++)
                         fprintf(fp3,"%s %d %s %s\n","Add in",i,"th minute is ",tmp->data);
                         fclose(fp3);
                     }
+
+        case 11:
+                {
+                     STACK s1, s2;
+                     int choice = 0,flag;
+
+                    printf("Enter the advertisments according to the timings\n");
+                    initialize_stacks(&s1, &s2);
+
+                    while(1)
+                    {
+
+                        printf("\n******** MENU ********\n");
+                        printf("1-Broadcast the Advertisment\n");
+                        printf("2-Update the ad\n");
+                        printf("3-Exit\n");
+                        printf("***********************\n");
+
+                        scanf("%d", &choice);
+
+                        switch(choice)
+                        {
+                            case 1: printf("\nWelcome to urban oasis mall..\n We are very glad to have you here\n");
+                                    view_current_message(&s1, &s2);
+                                    printf("*****The message is broadcasted*****\n");
+                                    break;
+
+                            case 2: update_hour(&s1, &s2);
+                                    printf("The message ad is updated\n");
+                                    printf("***********************************\n");
+                                    break;
+
+
+                            case 3: exit(0);
+                                    break;
+                       }
+
+                    }
+                }
+
         }
     }
     return 0;
