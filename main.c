@@ -146,8 +146,6 @@ void push(STACK * ps, struct message s)
 }
 
 
-
-
 void peek( STACK *ps)
 {
     printf("%s", ps->items[ps->top].message_data);
@@ -293,6 +291,47 @@ void centerstring(char *s)
     printf("%s\n",s);
 }
 
+struct queue
+{
+    int front;
+    int rear;
+    char items[MAX][1000];
+};
+
+typedef struct queue QUEUE;
+
+int empty1(QUEUE *q)
+{
+    if(q->front>q->rear)
+        return TRUE;
+    else
+        return FALSE;
+}
+
+int full1(QUEUE *q)
+{
+    if(q->rear==MAX-1)
+        return TRUE;
+    else
+        return FALSE;
+}
+
+void enqueue(QUEUE *q)
+{
+    if(full1(q))
+    {
+        printf("Queue Full\n");
+        return;
+    }
+    printf("Enter the element to be inserted\n");
+    char x[1000];
+    scanf("%s",x);
+    q->rear++;
+    strcpy(q->items[q->rear],x);
+    printf("Enqueue Sucessfull\n");
+    return;
+}
+
 void delay(int sec)
 {
     int ms=1000*sec;
@@ -303,6 +342,40 @@ void delay(int sec)
 int main()
 {
     FILE *fp1,*fp2,*fp3;
+
+    QUEUE q1,q2,q3,q4,q5,q6,q7,q8,q9,q10;
+
+    q1.front=0;
+    q1.rear=-1;
+
+    q2.front=0;
+    q2.rear=-1;
+
+    q3.front=0;
+    q3.rear=-1;
+
+    q4.front=0;
+    q4.rear=-1;
+
+    q5.front=0;
+    q5.rear=-1;
+
+    q6.front=0;
+    q6.rear=-1;
+
+    q7.front=0;
+    q7.rear=-1;
+
+    q8.front=0;
+    q8.rear=-1;
+
+    q9.front=0;
+    q9.rear=-1;
+
+    q10.front=0;
+    q10.rear=-1;
+
+    enqueue(&q1);
 
     AD *temp=NULL;
     int i,c,w,n;
@@ -1311,7 +1384,6 @@ for(i=1;i<=16;i++)
                         AD *tmp=start;
                         while(tmp->next!=NULL)
                         {
-                            delay(1);
                             centerstring(tmp->data);
                             fprintf(fp3,"%s %d %s %s\n","Add in",i,"th minute is ",tmp->data);
                             tmp=tmp->next;
