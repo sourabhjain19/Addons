@@ -3,11 +3,16 @@
 #include<string.h>
 #include<dos.h>
 #include<time.h>
+#include<stdbool.h>
 #define MAX 100
 
 #define STACKSIZE 6
 #define TRUE 1
 #define FALSE 0
+
+#define try bool __HadError=false;
+#define catch(x) ExitJmp:if(__HadError)
+#define throw(x) __HadError=true;goto ExitJmp;
 
 int currnodes=0,count=0;
 int i,s ,j,t,b,k,c,size;
@@ -337,6 +342,8 @@ void delay(int sec)
         ;
 }
 int main()
+{
+try
 {
     FILE *fp1,*fp2,*fp3;
 
@@ -1368,12 +1375,16 @@ for(i=1;i<=16;i++)
                         printf("Enter the Ad message");
                         getchar();
                         scanf("%[^\n]s",admes);
-                        printf("\nEnter the category of product");
+
+                        printf("Enter the category of product");
                         scanf("%s",category);
+
                         printf("Enter the producer of the ad");
                         scanf("%s",producer);
+
                         printf("Enter the brand embassedor of ad");
                         scanf("%s",emb);
+
                         printf("Enter the director of ad");
                         scanf("%s",dir);
 
@@ -1522,7 +1533,9 @@ for(i=1;i<=16;i++)
                     printf("User 8\n");
                     printf("User 9\n");
                     printf("User 10\n");
+
                     scanf("%d",&choice);
+
                     switch(choice)
                     {
                         case 1:
@@ -1533,10 +1546,102 @@ for(i=1;i<=16;i++)
                                             printf("%s\n",q1.items[i]);
                                         }
                                     }
+                                    break;
+
+                        case 2:
+                                    {
+                                         printf("The ad's displayed to user 2 is \n");
+                                        for(i=q2.front;i<=q2.rear;i++)
+                                        {
+                                            printf("%s\n",q2.items[i]);
+                                        }
+                                    }
+                                    break;
+
+                        case 3:
+                                    {
+                                         printf("The ad's displayed to user 3 is \n");
+                                        for(i=q3.front;i<=q3.rear;i++)
+                                        {
+                                            printf("%s\n",q3.items[i]);
+                                        }
+                                    }
+                                    break;
+
+                         case 4:
+                                    {
+                                         printf("The ad's displayed to user 4 is \n");
+                                        for(i=q4.front;i<=q4.rear;i++)
+                                        {
+                                            printf("%s\n",q4.items[i]);
+                                        }
+                                    }
+                                    break;
+
+                            case 5:
+                                    {
+                                         printf("The ad's displayed to user 5 is \n");
+                                        for(i=q5.front;i<=q5.rear;i++)
+                                        {
+                                            printf("%s\n",q5.items[i]);
+                                        }
+                                    }
+                                    break;
+
+                            case 6:
+                                    {
+                                         printf("The ad's displayed to user 6 is \n");
+                                        for(i=q6.front;i<=q6.rear;i++)
+                                        {
+                                            printf("%s\n",q6.items[i]);
+                                        }
+                                    }
+                                    break;
+
+                            case 7:
+                                    {
+                                         printf("The ad's displayed to user 7 is \n");
+                                        for(i=q7.front;i<=q7.rear;i++)
+                                        {
+                                            printf("%s\n",q7.items[i]);
+                                        }
+                                    }
+                                    break;
+
+                            case 8:
+                                    {
+                                         printf("The ad's displayed to user 8 is \n");
+                                        for(i=q8.front;i<=q8.rear;i++)
+                                        {
+                                            printf("%s\n",q8.items[i]);
+                                        }
+                                    }
+                                    break;
+
+                            case 9:
+                                    {
+                                         printf("The ad's displayed to user 9 is \n");
+                                        for(i=q9.front;i<=q9.rear;i++)
+                                        {
+                                            printf("%s\n",q9.items[i]);
+                                        }
+                                    }
+                                    break;
+
+                            case 10:
+                                    {
+                                         printf("The ad's displayed to user 10 is \n");
+                                        for(i=q10.front;i<=q10.rear;i++)
+                                        {
+                                            printf("%s\n",q10.items[i]);
+                                        }
+                                    }
                     }
                 }
                 break;
+
         case 0:     exit(0);
+
         case 6:
                     {
                         printf("Deleted all the previous data in the files.\n");
@@ -1550,6 +1655,7 @@ for(i=1;i<=16;i++)
                         fclose(fp3);
                     }
                     break;
+
         case 10:
                     {
                         fp3=fopen("Data_stored_TV.txt","a+");
@@ -1558,6 +1664,7 @@ for(i=1;i<=16;i++)
 
                         i=1;
                         AD *tmp=start;
+
                         while(tmp->next!=NULL)
                         {
                             centerstring(tmp->data);
@@ -1565,8 +1672,10 @@ for(i=1;i<=16;i++)
                             tmp=tmp->next;
                             i++;
                         }
+
                         printf("%s\n",tmp->data);
                         fprintf(fp3,"%s %d %s %s\n","Add in",i,"th minute is ",tmp->data);
+
                         fclose(fp3);
                     }
 
@@ -1610,5 +1719,10 @@ for(i=1;i<=16;i++)
 
         }
     }
+}
+catch(. . .)
+{
+     printf("Invalid Input");
+}
     return 0;
 }
