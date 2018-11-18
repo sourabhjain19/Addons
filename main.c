@@ -316,18 +316,15 @@ int full1(QUEUE *q)
         return FALSE;
 }
 
-void enqueue(QUEUE *q)
+void enqueue(QUEUE *q,char item[1000])
 {
     if(full1(q))
     {
         printf("Queue Full\n");
         return;
     }
-    printf("Enter the element to be inserted\n");
-    char x[1000];
-    scanf("%s",x);
     q->rear++;
-    strcpy(q->items[q->rear],x);
+    strcpy(q->items[q->rear],item);
     printf("Enqueue Sucessfull\n");
     return;
 }
@@ -374,8 +371,6 @@ int main()
 
     q10.front=0;
     q10.rear=-1;
-
-    enqueue(&q1);
 
     AD *temp=NULL;
     int i,c,w,n;
@@ -1360,6 +1355,187 @@ for(i=1;i<=16;i++)
                         fclose(fp2);
                         break;
                     }
+        case 7:
+                     {
+                         FILE *f;
+                         char word[1000];
+                         char category[100];
+                         char producer[100];
+                         char dir[100];
+                         char emb[100];
+                         char admes[1000];
+
+                        printf("Enter the Ad message");
+                        getchar();
+                        scanf("%[^\n]s",admes);
+                        printf("\nEnter the category of product");
+                        scanf("%s",category);
+                        printf("Enter the producer of the ad");
+                        scanf("%s",producer);
+                        printf("Enter the brand embassedor of ad");
+                        scanf("%s",emb);
+                        printf("Enter the director of ad");
+                        scanf("%s",dir);
+
+                            f=fopen("U1.txt","r");
+                            while(!feof(f))
+                            {
+                                fscanf(f,"%s",word);
+                                if(!strcmp(word,category))
+                                {
+                                    enqueue(&q1,admes);
+                                    printf("Add is sent\n");
+                                    break;
+                                }
+                            }
+                            fclose(f);
+
+                             f=fopen("U2.txt","r");
+                            while(!feof(f))
+                            {
+                                fscanf(f,"%s",word);
+                                if(!strcmp(word,category))
+                                {
+                                    enqueue(&q2,admes);
+                                    printf("Add is sent\n");
+                                    break;
+                                }
+                            }
+                            fclose(f);
+
+                             f=fopen("U3.txt","r");
+                            while(!feof(f))
+                            {
+                                fscanf(f,"%s",word);
+                                if(!strcmp(word,category))
+                                {
+                                    enqueue(&q3,admes);
+                                    printf("Add is sent\n");
+                                    break;
+                                }
+                            }
+                            fclose(f);
+
+                             f=fopen("U4.txt","r");
+                            while(!feof(f))
+                            {
+                                fscanf(f,"%s",word);
+                                if(!strcmp(word,category))
+                                {
+                                    enqueue(&q4,admes);
+                                    printf("Add is sent\n");
+                                    break;
+                                }
+                            }
+                            fclose(f);
+
+                             f=fopen("U5.txt","r");
+                            while(!feof(f))
+                            {
+                                fscanf(f,"%s",word);
+                                if(!strcmp(word,category))
+                                {
+                                    enqueue(&q5,admes);
+                                    printf("Add is sent\n");
+                                    break;
+                                }
+                            }
+                            fclose(f);
+
+                             f=fopen("U6.txt","r");
+                            while(!feof(f))
+                            {
+                                fscanf(f,"%s",word);
+                                if(!strcmp(word,category))
+                                {
+                                    enqueue(&q6,admes);
+                                    printf("Add is sent\n");
+                                    break;
+                                }
+                            }
+                            fclose(f);
+
+                             f=fopen("U7.txt","r");
+                            while(!feof(f))
+                            {
+                                fscanf(f,"%s",word);
+                                if(!strcmp(word,category))
+                                {
+                                    enqueue(&q7,admes);
+                                    printf("Add is sent\n");
+                                    break;
+                                }
+                            }
+                            fclose(f);
+
+                             f=fopen("U8.txt","r");
+                            while(!feof(f))
+                            {
+                                fscanf(f,"%s",word);
+                                if(!strcmp(word,category))
+                                {
+                                    enqueue(&q8,admes);
+                                    printf("Add is sent\n");
+                                    break;
+                                }
+                            }
+                            fclose(f);
+
+                             f=fopen("U9.txt","r");
+                            while(!feof(f))
+                            {
+                                fscanf(f,"%s",word);
+                                if(!strcmp(word,category))
+                                {
+                                    enqueue(&q9,admes);
+                                    printf("Add is sent\n");
+                                    break;
+                                }
+                            }
+                            fclose(f);
+
+                             f=fopen("U10.txt","r");
+                            while(!feof(f))
+                            {
+                                fscanf(f,"%s",word);
+                                if(!strcmp(word,category))
+                                {
+                                    enqueue(&q10,admes);
+                                    printf("Add is sent\n");
+                                    break;
+                                }
+                            }
+                            fclose(f);
+                     }
+                     break;
+        case 8:
+                {
+                    int choice;
+                    printf("Enter the user name whose add is to be displayed :\n");
+                    printf("User 1\n");
+                    printf("User 2\n");
+                    printf("User 3\n");
+                    printf("User 4\n");
+                    printf("User 5\n");
+                    printf("User 6\n");
+                    printf("User 7\n");
+                    printf("User 8\n");
+                    printf("User 9\n");
+                    printf("User 10\n");
+                    scanf("%d",&choice);
+                    switch(choice)
+                    {
+                        case 1:
+                                    {
+                                         printf("The ad's displayed to user 1 is \n");
+                                        for(i=q1.front;i<=q1.rear;i++)
+                                        {
+                                            printf("%s\n",q1.items[i]);
+                                        }
+                                    }
+                    }
+                }
+                break;
         case 0:     exit(0);
         case 6:
                     {
@@ -1424,7 +1600,6 @@ for(i=1;i<=16;i++)
                                     printf("The message ad is updated\n");
                                     printf("***********************************\n");
                                     break;
-
 
                             case 3: exit(0);
                                     break;
