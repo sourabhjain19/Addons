@@ -4,7 +4,12 @@
 #include<dos.h>
 #include<time.h>
 #include<stdbool.h>
+#include<string.h>
+#include<ctype.h>
+
 #define MAX 100
+#define MAX_QUEUE 100
+#define V_SIZE  100
 
 #define STACKSIZE 6
 #define TRUE 1
@@ -14,9 +19,44 @@
 #define catch(x) ExitJmp:if(__HadError)
 #define throw(x) __HadError=true;goto ExitJmp;
 
-int currnodes=0,count=0;
-int i,s ,j,t,b,k,c,size;
+int currnodes=0;
+int count=0;
+
+int i,s;
+int j,t;
+int b,k;
+int c,size;
+
 int a[MAX];
+int level[V_SIZE];
+
+struct node
+{
+    char info[50];
+    struct node *next;
+    struct node *prev;
+};
+typedef struct node NODE;
+int currnode = 0;
+
+struct dqueue
+{
+    int rear;
+    int front;
+    int data[MAX_QUEUE];
+
+};
+
+struct squeue
+{
+    int rear;
+    int front;
+    char ad[MAX_QUEUE][50];
+};
+
+typedef struct squeue QUEUES;
+
+typedef struct dqueue QUEUED;
 
 struct message
 {
@@ -36,7 +76,7 @@ typedef struct stack STACK;
 struct ad
 {
     char data[1000];
-    struct add *next;
+    struct ad *next;
 };
 
 typedef struct ad AD;
@@ -50,6 +90,262 @@ struct news_variables
 
 typedef struct news_variables NV;
 
+NODE * getnode()
+{
+    NODE * newnode;
+    newnode = (NODE *)malloc(sizeof(NODE));
+    if(newnode == NULL)
+        printf("Memory Allocation Failed\n");
+    return newnode;
+}
+
+
+void getdata(NODE * newnode)
+{
+    printf("Enter the ad information\n");
+    getchar();
+    scanf("%[^\n]s", newnode->info);
+    newnode->next = NULL;
+    newnode->prev = NULL;
+}
+
+
+NODE * insert_at_front(NODE * start)
+{
+    NODE * newnode;
+    newnode = getnode();
+    if(newnode == NULL)
+        return start;
+    getdata(newnode);
+    if(start == NULL)
+        start = newnode;
+    else
+    {
+        newnode->next= start;
+        start->prev=newnode;
+        start = newnode;
+    }
+    currnode++;
+    printf("%s info is inserted at the start of the doubly linked list\n", newnode->info);
+    return start;
+}
+
+
+NODE * insert_at_end(NODE * start)
+{
+    NODE * newnode, *tempnode;
+    newnode = getnode();
+    if(newnode == NULL)
+        return start;
+    getdata(newnode);
+    if(start == NULL)
+        start = newnode;
+    else
+    {
+        tempnode = start;
+        while(tempnode->next != NULL)
+            tempnode = tempnode->next;
+        tempnode->next = newnode;
+        newnode->prev = tempnode;
+    }
+    currnode++;
+    printf("%s is Inserted\n", newnode->info);
+    return start;
+}
+
+
+NODE * insert_at_position(NODE * start)
+{
+    NODE *newnode, *tempnode;
+    int position=0, i=0;
+    printf("Enter insert position\n");
+    scanf("%d", &position);
+    if(position < 1 || position > currnodes+1 )
+        printf("Invalid position\n");
+    else
+    {
+        newnode = getnode();
+        if(newnode == NULL)
+            return start;
+        getdata(newnode);
+        if(start == NULL)
+            start = newnode;
+        else if(position == 1)
+        {
+            newnode->next= start;
+            start->prev=newnode;
+            start = newnode;
+        }
+        else if(position == currnodes+1)
+        {
+            tempnode = start;
+            while(tempnode->next != NULL)
+                tempnode = tempnode->next;
+            tempnode->next = newnode;
+            newnode->prev = tempnode;
+        }
+        else
+        {
+            tempnode = start;
+            for(i=2;i<position;i++)
+                tempnode = tempnode->next;
+            newnode->next = tempnode->next;
+            newnode->prev = tempnode;
+            tempnode->next->prev = newnode;
+            tempnode->next = newnode;
+            }
+            currnode++;
+            printf("%s info is inserted at the %d position of the doubly linked list\n", newnode->info,position);
+        }
+        return start;
+}
+
+
+NODE * delete_from_start(NODE * start)
+{
+    NODE * tempnode;
+    if(start == NULL)
+        printf("List is empty\n");
+    else
+    {
+    if(currnodes == 1)
+    {
+        tempnode = start;
+        start = NULL;
+    }
+    else
+    {
+        tempnode = start;
+        start = start->next;
+        start->prev = NULL;
+    }
+    printf("Node %s deleted from the start of the Doubly linked list\n", tempnode->info);
+    free(tempnode);
+    currnode--;
+    }
+    return start;
+}
+
+
+NODE * delete_from_end( NODE * start)
+{
+    NODE * tempnode, *prevnode;
+    if(start == NULL)
+        printf("List is empty\n");
+    else
+    {
+    if(currnodes == 1)
+    {
+        tempnode = start;
+        start = NULL;
+    }
+    else
+    {
+        tempnode = start;
+        while(tempnode->next != NULL)
+            tempnode = tempnode->next;
+        prevnode = tempnode;
+        prevnode = prevnode->prev;
+        prevnode->next = NULL;
+    }
+    printf("Node %s deleted from the end of the Doubly linked list\n", tempnode->info);
+    free(tempnode);
+    currnode--;
+    }
+    return start;
+}
+
+
+NODE * delete_from_position(NODE * start)
+{
+    NODE * tempnode, *prevnode;
+    int position=0, i=0;
+    if(start == NULL)
+        printf("List is empty\n");
+    else
+    {
+    printf("Enter delete position\n");
+    scanf("%d", &position);
+    if(position < 1 || position > currnode )
+        printf("Invalid position\n");
+    else
+    {
+    if(currnode == 1)
+    {
+        tempnode = start;
+        start = NULL;
+    }
+    else if(position == 1)
+    {
+        tempnode = start;
+        start = start->next;
+        start->prev = NULL;
+    }
+    else if(position == currnode)
+    {
+    tempnode = start;
+    while(tempnode->next != NULL)
+        tempnode = tempnode->next;
+    prevnode = tempnode;
+    prevnode = prevnode->prev;
+    prevnode->next = NULL;
+    }
+    else
+    {
+        prevnode = NULL;
+        tempnode = start;
+        i = 2;
+    while(i<=position)
+    {
+        prevnode = tempnode;
+        tempnode = tempnode->next;
+        i++;
+    }
+        prevnode->next = tempnode->next;
+        tempnode->next->prev = prevnode;
+    }
+        printf("Node %s deleted from the %d position from the Doubly linked list\n", tempnode->info, position);
+        free(tempnode);
+        currnode--;
+    }
+    }
+    return start;
+}
+
+
+void display_list(NODE * start)
+{
+    NODE * tempnode;
+    int x;
+    tempnode = start;
+    printf("%s\n",tempnode->info);
+    while(1)
+    {
+    printf("Enter 1 to Move Forward and 2 to go Back and 0 to Exit\n");
+    scanf("%d",&x);
+    if(currnodes == 0)
+        printf("List Empty\n");
+    else
+    {
+
+
+        if(x==1)
+        {
+            tempnode=tempnode->next;
+            printf("%s\n",tempnode->info);
+        }
+        else if(x==2)
+        {
+            tempnode=tempnode->prev;
+            printf("%s\n",tempnode->info);
+        }
+        else if(x==0)
+            break;
+
+    }
+    }
+}
+
 void initialize_stacks(STACK *ps1, STACK *ps2)
 {
     ps1->top = -1;
@@ -61,16 +357,16 @@ void initialize_stacks(STACK *ps1, STACK *ps2)
     int i,j,size;
     char ad[100];
     int h1,h2;
-    printf("enter the number of ads\n");
+    printf("Enter the Number of Ads :");
     scanf("%d",&size);
-    getchar();
     for(i=0;i<size;i++)
     {
 
-        printf("\nenter the advertisment you want to broadcast\n");
-        scanf("%[^\n]s",ad);
+        printf("Enter the Advertisement you want to broadcast\n");
         getchar();
-        printf("enter the timings when your ad should be displayed\n*****Note:An ad can be broadcasted twice a day*****\n");
+        scanf("%[^\n]s",ad);
+
+        printf("Enter the timings when your ad should be displayed\n*****Note:An ad can be broad-casted twice a day*****\n");
         scanf("%d",&h1);
         scanf("%d",&h2);
 
@@ -93,6 +389,13 @@ int empty(STACK *ps)
         return FALSE;
 }
 
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
+
 struct message pop(STACK *ps)
 {
     struct message s;
@@ -102,18 +405,34 @@ struct message pop(STACK *ps)
     ps->top --;
     return s;
 }
-
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
 
 void view_current_message(STACK *ps1, STACK *ps2)
 {
+
     if(ps1->active == 1)
         peek(ps1);
+
     else
         peek(ps2);
+
 }
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
 
 void update_hour(STACK *ps1, STACK *ps2)
+
 {
+
     struct message s;
 
     if(ps1->active == 1)
@@ -125,9 +444,12 @@ void update_hour(STACK *ps1, STACK *ps2)
         {
             ps1->active = 0;
             ps2->active = 1;
+
         }
     }
+
     else
+
     {
         s = pop(ps2);
         push(ps1, s);
@@ -136,29 +458,53 @@ void update_hour(STACK *ps1, STACK *ps2)
         {
             ps2->active = 0;
             ps1->active = 1;
-        }
-    }
-}
 
+        }
+
+    }
+
+}
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
 void push(STACK * ps, struct message s)
+
 {
 
     ps->top++;
+
     strcpy(ps->items[ps->top].message_data,s.message_data);
     ps->items[ps->top].hour[0] = s.hour[0];
     ps->items[ps->top].hour[1] = s.hour[1];
+
     return;
+
 }
 
-
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
 void peek( STACK *ps)
 {
+
     printf("%s", ps->items[ps->top].message_data);
     printf("%s%d", "\ntiming is ", ps->items[ps->top].hour[0]);
     printf("\n\n\n");
+
     return;
 }
-
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
 
 void print( STACK *ps1, STACK *ps2)
 {
@@ -166,6 +512,7 @@ void print( STACK *ps1, STACK *ps2)
 
     if(ps1->active == 1)
         printf("%s", "Stack1 is Active\n");
+
     else
         printf("%s", "Stack2 is Active\n");
 
@@ -175,31 +522,46 @@ void print( STACK *ps1, STACK *ps2)
     }
     else
     {
+
         printf("%s", "\nThe stack elements of first stack are listed below:\n");
         for(i = ps1->top ; i >= 0 ; i--)
         {
+
             printf("%s\n", ps1->items[i].message_data);
+
         }
     }
 
     if(empty(ps2))
     {
+
         printf("%s", "\n\nStack2 is empty\n");
+
     }
+
     else
     {
+
         printf("%s", "\nThe stack elements of second stack are listed below:\n");
         for(j = ps2->top ; j >= 0 ; j--)
         {
+
             printf("%s\n", ps2->items[j].message_data);
+
         }
 
     }
 }
-
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
 
 AD *append(AD * start,char data[],int position)
 {
+
    AD * temp=start;
    int i=0;
 
@@ -213,9 +575,15 @@ AD *append(AD * start,char data[],int position)
 
    return start;
 }
-
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
 AD *displayNTimes(AD * start,int n,char content[])
 {
+
     int l;
      for(l=0;l<n;l++)
     {
@@ -235,9 +603,15 @@ AD *displayNTimes(AD * start,int n,char content[])
     }
     return start;
 }
-
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
  AD * InsertNth(AD * start,char data[],int position)
  {
+
     AD * newnode, *nextnode;
     k=0;
 
@@ -285,26 +659,45 @@ AD *displayNTimes(AD * start,int n,char content[])
     }
     return start;
 }
-
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
 void centerstring(char *s)
 {
+
     int i;
     int l=strlen(s);
     int pos=(int)((80-l)/2);
     for(i=0;i<pos;i++)
         printf(" ");
     printf("%s\n",s);
-}
 
+}
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
 struct queue
 {
+
     int front;
     int rear;
     char items[MAX][1000];
+
 };
 
 typedef struct queue QUEUE;
-
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
 int empty1(QUEUE *q)
 {
     if(q->front>q->rear)
@@ -312,17 +705,30 @@ int empty1(QUEUE *q)
     else
         return FALSE;
 }
-
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
 int full1(QUEUE *q)
 {
+
     if(q->rear==MAX-1)
         return TRUE;
     else
         return FALSE;
-}
 
+}
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
 void enqueue(QUEUE *q,char item[1000])
 {
+
     if(full1(q))
     {
         printf("Queue Full\n");
@@ -332,20 +738,238 @@ void enqueue(QUEUE *q,char item[1000])
     strcpy(q->items[q->rear],item);
     printf("Enqueue Sucessfull\n");
     return;
-}
 
+}
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
 void delay(int sec)
 {
+
     int ms=1000*sec;
     clock_t start_time=clock();
     while(clock() < start_time+ ms)
         ;
 }
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
+int isEmptyd(QUEUED *pq)
+{
+    return (pq->front>pq->rear);
+}
+
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
+int isEmptys(QUEUES *pq)
+{
+    return (pq->front>pq->rear);
+}
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
+
+int isFulld(QUEUED *pq)
+{
+    return (pq->rear==MAX_QUEUE);
+}
+
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
+int isFulls(QUEUES *pq)
+{
+    return (pq->rear==MAX_QUEUE);
+}
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
+
+void enqueued(QUEUED *pq,int data)
+{
+
+    if(isFulld(pq))
+    {
+        printf("Fatal!Cannot enqueue more elements");
+    }
+    else
+    {
+        pq->rear++;
+        pq->data[pq->rear]=data;
+
+    }
+}
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
+void enqueues(QUEUES *pq)
+{
+        int str[50];
+
+    if(isFulls(pq))
+    {
+        printf("Fatal!Cannot enqueue more elements");
+    }
+    else
+    {
+        pq->rear++;
+
+        printf("Enter the advertisment\n");
+        getchar();
+        scanf("%[^\n]s",str);
+        strcpy(pq->ad[pq->rear],str);
+        printf("Advertisement has been added successfully\n");
+
+    }
+}
+
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
+int dequeued(QUEUED *pq)
+{
+
+    if(isEmptyd(pq))
+    {
+
+        printf("************End of BFS************");
+        return -1;
+
+    }
+    else{
+
+        int x = pq->data[pq->front];
+        pq->front++;
+        return x;
+
+    }
+}
+
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
+void dequeues(QUEUES *pq)
+{
+
+    if(isEmptys(pq))
+    {
+        printf("NO ads");
+        return -1;
+    }
+    else{
+        pq->front++;
+        printf("Ad updated");
+
+    }
+}
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
+void seeks(QUEUES *pq)
+{
+
+    if(isEmptys(pq))
+    {
+        printf("no ads");
+        return;
+    }
+    else
+    {
+        printf("%s",pq->ad[pq->front]);
+    }
+
+}
+/*
+ Function Name: message pop
+Input Params: stack pointer *ps
+Return Type: void
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
+void BFS(int s,int v,int adj[][V_SIZE])
+{
+    int vis[V_SIZE],p[V_SIZE];
+    //initialising visited array
+    for (int i=0;i<v;i++)
+    {
+        vis[i]=0;
+        p[i]=0;
+        level[i]=0;
+    }
+
+    QUEUED q;
+    q.rear=-1;
+    q.front=0;
+    enqueued(&q,s);
+    vis[s]=1;
+    level[s]=0;
+    //printf("%d",isEmpty(&q));
+    while(!isEmptyd(&q))
+    {
+
+        int curr=dequeued(&q);
+        printf("%d",curr+1);
+        for(int i=0;i<v;i++)
+        {
+            if(adj[curr][i]==1 && !vis[i])
+            {
+                level[i]=level[curr]+1;
+                enqueued(&q,i);
+                vis[i]=1;
+                p[i]=curr;
+            }
+        }
+    }
+    for(int i=0;i<v;i++)
+        printf("%d\n",level[i]);
+}
+
 int main()
 {
 try
 {
     FILE *fp1,*fp2,*fp3;
+
+    FILE *details;
+
+
+    FILE *details1;
+
+
+    FILE *details2;
+
+
+    char producer[100],director[100],ba[100];
 
     QUEUE q1,q2,q3,q4,q5,q6,q7,q8,q9,q10;
 
@@ -410,12 +1034,39 @@ for(i=1;i<=16;i++)
 
     while(1)
     {
+        int c1;
         printf("*******************************\n");
-        printf("Enter the Choice :\n1.Add an Advertisement in TV\n2.Add an Advertisement in Times of India Newspaper\n3.Add an advertisement in Hindu Newspaper\n4.Display ads in Times of India\n5.Display ads in Hindu Newspaper\n6.Delete all the contents in the files\n");
+        printf("Enter the Choice :\n");
+        printf("1.Add an Advertisement in TV\n");
+        printf("2.Add an Advertisement in Times of India Newspaper\n");
+        printf("3.Add an Advertisement in Hindu Newspaper\n");
+        printf("4.Add an Advertisement in Banners of the shopping malls time to time\n");
+        printf("5.Add an Advertisement in Social Media\n");
+        printf("6.Add an Advertisement through messages in the nearer locality\n");
+        printf("7.Display Advertisement in TV\n");
+        printf("8.Display Advertisement in Times of India Newspaper\n");
+        printf("9.Display Advertisement in Hindu Newspaper\n");
+        printf("10.Display Advertisement in Banners of Shopping Mall\n");
+        printf("11.Display Advertisement in Social Media of various users\n");
+        printf("12.Navigate through Advertisements\n");
+        printf("13.Delete the information stored in all the files\n");
+        printf("14.Report any Advertisements\n");
+
         scanf("%d",&c);
+
+        if(c<0 || c>14)
+        {
+            printf("Invalid");
+            break;
+        }
+
+
         printf("*******************************\n");
         switch(c)
         {
+            /*
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
         case 1:
                     {
                         if(count==MAX)
@@ -423,11 +1074,31 @@ for(i=1;i<=16;i++)
                                 printf("No more adds can be displayed today....\n");
                                 break;
                         }
+
+                        details=fopen("Tv ads.txt","a+");
+
                         printf("The Charges for displaying an add 10 minutes a day is 1 lakh. Assuming an add is of 1 minute .\n");
 
                         printf("Enter the advertisement : ");
                         getchar();
                         scanf("%[^\n]s",addata);
+                        fprintf(details,"AD is %s\n",addata);
+
+                        printf("Enter the Producer of ad : ");
+                        scanf("%s",producer);
+                        fprintf(details,"Producer = %s\n",producer );
+
+                        printf("Enter the Director of ad : ");
+                        scanf("%s",director);
+                        fprintf(details,"Director = %s\n",director);
+
+                        printf("Enter the Brand Ambassador : ");
+                        scanf("%s",ba);
+                        fprintf(details,"Brand Ambassador = %s\n",ba );
+
+                        fprintf(details,"***********************\n");
+
+                        fclose(details);
 
                         printf("How many minutes you want your add to display in a day:");
                         scanf("%d",&n);
@@ -462,6 +1133,9 @@ for(i=1;i<=16;i++)
                             break;
                         }
                     }
+                    /*
+Description: Recursively visits the tree in the order of Left, Right, Root
+ */
         case 2:
                      {
                          printf("Welcome to TIMES OF INDIA ad section\n");
@@ -471,6 +1145,15 @@ for(i=1;i<=16;i++)
                          printf("1.Matrimony:- \t1.Inner Page=735/sq.cm\t2.Front Page=800/sq.cm\t3.Back Page=760/sq.cm\n2.Retail:- \t1.Inner Page=500/sq.cm\t2.Front Page=600/sq.cm\t3.Back Page=550/sq.cm\n3.Services:-\t1.Inner Page=132/sq.cm\t2.Front Page=149/sq.cm\t3.Back Page=140/sq.cm\n4.Education:-\t1.Inner Page=800/sq.cm\t2.Front Page: 850/sq.cm\t3.Back Page=820/sq.cm\n5.Others:-\t1.Inner Page=120/sq.cm\t2.Front Page=200/sq.cm\t3.Back Page=185/sq.cm\n");
                          printf("Please select your category\n");
                          scanf("%d",&c);
+
+          if(c<0 || c>5)
+        {
+            printf("Invalid");
+            break;
+        }
+
+          details1=fopen("Times of India ads.txt","a+");
+
                          switch(c)
                         {
                         case 1:
@@ -478,11 +1161,32 @@ for(i=1;i<=16;i++)
                                         printf("Enter the Advertisement : ");
                                         getchar();
                                         scanf("%[^\n]s",addata);
+                                        fprintf(details1,"AD is %s\n",addata);
+
+                                        printf("Enter the name of advertiser : ");
+                                        scanf("%s",producer);
+                                        fprintf(details1,"Name = %s\n",producer );
+
+                                        printf("Enter the  phone no : ");
+                                        scanf("%s",director);
+                                        fprintf(details1,"Phone no = %s\n",director);
+
+                                        printf("Enter the Address : ");
+                                        getchar();
+                                        scanf("%[^\n]s",ba);
+                                        fprintf(details1,"Address = %s\n",ba );
+
+                                        fprintf(details1,"***********************\n");
 
                                         printf("Please Enter the page you want to select : \n1.Inner Page \n2.Front Page \n3.Back Page\n");
                                         printf("Please enter the choice : ");
                                         scanf("%d",&w);
 
+          if(w<0 || w>3)
+        {
+            printf("Invalid");
+            break;
+        }
                                         switch(w)
                                         {
                                             case 1:
@@ -509,7 +1213,7 @@ for(i=1;i<=16;i++)
                                                                 printf("Failed to publish your add\n");
                                                         }
                                                         break;
-                                            case 2:
+                                             case 2:
                                                     {
                                                         if(news1.v1==0)
                                                         {
@@ -557,16 +1261,38 @@ for(i=1;i<=16;i++)
                                         }
                                         break;
                                     }
-                        case 2:
+
+                           case 2:
                                     {
                                         printf("Enter the Advertisement : ");
                                         getchar();
                                         scanf("%[^\n]s",addata);
+                                        fprintf(details1,"AD is %s\n",addata);
+
+                                        printf("Enter the name of advertiser : ");
+                                        scanf("%s",producer);
+                                        fprintf(details1,"Name = %s\n",producer );
+
+                                        printf("Enter the  phone no : ");
+                                        scanf("%s",director);
+                                        fprintf(details1,"Phone no = %s\n",director);
+
+                                        printf("Enter the Address : ");
+                                        getchar();
+                                        scanf("%[^\n]s",ba);
+                                        fprintf(details1,"Address = %s\n",ba );
+
+                                        fprintf(details1,"***********************\n");
 
                                         printf("Please Enter the page you want to select : \n1.Inner Page \n2.Front Page \n3.Back Page\n");
                                         printf("Please enter the choice : ");
                                         scanf("%d",&w);
 
+          if(w<0 || w>3)
+        {
+            printf("Invalid");
+            break;
+        }
                                         switch(w)
                                         {
                                             case 1:
@@ -644,11 +1370,32 @@ for(i=1;i<=16;i++)
                                         printf("Enter the Advertisement : ");
                                         getchar();
                                         scanf("%[^\n]s",addata);
+                                        fprintf(details1,"AD is %s\n",addata);
+
+                                        printf("Enter the name of advertiser : ");
+                                        scanf("%s",producer);
+                                        fprintf(details1,"Name = %s\n",producer );
+
+                                        printf("Enter the  phone no : ");
+                                        scanf("%s",director);
+                                        fprintf(details1,"Phone no = %s\n",director);
+
+                                        printf("Enter the Address : ");
+                                        getchar();
+                                        scanf("%[^\n]s",ba);
+                                        fprintf(details1,"Address = %s\n",ba );
+
+                                        fprintf(details1,"***********************\n");
 
                                         printf("Please Enter the page you want to select : \n1.Inner Page \n2.Front Page \n3.Back Page\n");
                                         printf("Please enter the choice : ");
                                         scanf("%d",&w);
 
+          if(w<0 || w>3)
+        {
+            printf("Invalid");
+            break;
+        }
                                         switch(w)
                                         {
                                             case 1:
@@ -727,11 +1474,32 @@ for(i=1;i<=16;i++)
                                         printf("Enter the Advertisement : ");
                                         getchar();
                                         scanf("%[^\n]s",addata);
+                                        fprintf(details1,"AD is %s\n",addata);
+
+                                        printf("Enter the name of advertiser : ");
+                                        scanf("%s",producer);
+                                        fprintf(details1,"Name = %s\n",producer );
+
+                                        printf("Enter the  phone no : ");
+                                        scanf("%s",director);
+                                        fprintf(details1,"Phone no = %s\n",director);
+
+                                        printf("Enter the Address : ");
+                                        getchar();
+                                        scanf("%[^\n]s",ba);
+                                        fprintf(details1,"Address = %s\n",ba );
+
+                                        fprintf(details1,"***********************\n");
 
                                         printf("Please Enter the page you want to select : \n1.Inner Page \n2.Front Page \n3.Back Page\n");
                                         printf("Please enter the choice : ");
                                         scanf("%d",&w);
 
+          if(w<0 || w>3)
+        {
+            printf("Invalid");
+            break;
+        }
                                         switch(w)
                                         {
                                             case 1:
@@ -764,9 +1532,11 @@ for(i=1;i<=16;i++)
                                                         {
                                                             printf("Enter the size of ad in sq cms :");
                                                             scanf("%d",&size);
+
                                                             printf("The charges of ad in Education for Front page is %d rupees\n",size*820);
                                                             printf("Are you ready to pay the charges :\n1.Yes\n0.No\n");
                                                             scanf("%d",&i);
+
                                                             if(i==1)
                                                             {
                                                                 printf("Your ad is published.\n");
@@ -810,11 +1580,31 @@ for(i=1;i<=16;i++)
                                         printf("Enter the Advertisement : ");
                                         getchar();
                                         scanf("%[^\n]s",addata);
+                                        fprintf(details1,"AD is %s\n",addata);
 
+                                        printf("Enter the name of advertiser : ");
+                                        scanf("%s",producer);
+                                        fprintf(details2,"Name = %s\n",producer );
+
+                                        printf("Enter the  phone no : ");
+                                        scanf("%s",director);
+                                        fprintf(details2,"Phone no = %s\n",director);
+
+                                        printf("Enter the Address : ");
+                                        getchar();
+                                        scanf("%[^\n]s",ba);
+                                        fprintf(details2,"Address = %s\n",ba );
+
+                                        fprintf(details2,"***********************\n");
                                         printf("Please Enter the page you want to select : \n1.Inner Page \n2.Front Page \n3.Back Page\n");
                                         printf("Please enter the choice : ");
                                         scanf("%d",&w);
 
+          if(w<0 || w>3)
+        {
+            printf("Invalid");
+            break;
+        }
                                         switch(w)
                                         {
                                             case 1:
@@ -890,6 +1680,7 @@ for(i=1;i<=16;i++)
                                     }
                                     break;
                     }
+                    fclose(details1);
                     break;
 
 
@@ -904,6 +1695,15 @@ for(i=1;i<=16;i++)
                         printf("1.Property    : - \t1.Inner Page = 70\t2.Front Page = 125\t3.Back Page = 95\n2.Empower     : - \t1.Inner Page = 75\t2.Front Page = 350\t3.Back Page = 175\n3.Tenders     : - \t1.Inner Page = 70\t2.Front Page = 125\t3.Back Page = 95\n4.Automobile  : - \t1.Inner Page = 125\t2.Front Page = 160\t3.Back Page = 150\n5.Others      : - \t1.Inner Page = 120\t2.Front Page = 200\t3.Back Page = 185\n");
                         printf("Please select your category : ");
                         scanf("%d",&c);
+
+          if(c<0 || c>5)
+        {
+            printf("Invalid");
+            break;
+        }
+
+        details2=fopen("The Hindu ads.txt","a+");
+
                         switch(c)
                         {
                         case 1:
@@ -911,11 +1711,32 @@ for(i=1;i<=16;i++)
                                         printf("Enter the Advertisement : ");
                                         getchar();
                                         scanf("%[^\n]s",addata);
+                                        fprintf(details2,"AD is %s\n",addata);
+
+                                        printf("Enter the name of advertiser : ");
+                                        scanf("%s",producer);
+                                        fprintf(details2,"Name = %s\n",producer );
+
+                                        printf("Enter the  phone no : ");
+                                        scanf("%s",director);
+                                        fprintf(details2,"Phone no = %s\n",director);
+
+                                        printf("Enter the Address : ");
+                                        getchar();
+                                        scanf("%[^\n]s",ba);
+                                        fprintf(details2,"Address = %s\n",ba );
+
+                                        fprintf(details2,"***********************\n");
 
                                         printf("Please Enter the page you want to select : \n1.Inner Page \n2.Front Page \n3.Back Page\n");
                                         printf("Please enter the choice : ");
                                         scanf("%d",&w);
 
+          if(w<0 || w>3)
+        {
+            printf("Invalid");
+            break;
+        }
                                         switch(w)
                                         {
                                             case 1:
@@ -995,11 +1816,32 @@ for(i=1;i<=16;i++)
                                         printf("Enter the Advertisement : ");
                                         getchar();
                                         scanf("%[^\n]s",addata);
+                                        fprintf(details2,"AD is %s\n",addata);
+
+                                        printf("Enter the name of advertiser : ");
+                                        scanf("%s",producer);
+                                        fprintf(details2,"Name = %s\n",producer );
+
+                                        printf("Enter the  phone no : ");
+                                        scanf("%s",director);
+                                        fprintf(details2,"Phone no = %s\n",director);
+
+                                        printf("Enter the Address : ");
+                                        getchar();
+                                        scanf("%[^\n]s",ba);
+                                        fprintf(details2,"Address = %s\n",ba );
+
+                                        fprintf(details2,"***********************\n");
 
                                         printf("Please Enter the page you want to select : \n1.Inner Page \n2.Front Page \n3.Back Page\n");
                                         printf("Please enter the choice : ");
                                         scanf("%d",&w);
 
+          if(w<0 || w>3)
+        {
+            printf("Invalid");
+            break;
+        }
                                         switch(w)
                                         {
                                             case 1:
@@ -1077,11 +1919,32 @@ for(i=1;i<=16;i++)
                                         printf("Enter the Advertisement : ");
                                         getchar();
                                         scanf("%[^\n]s",addata);
+                                        fprintf(details2,"AD is %s\n",addata);
+
+                                        printf("Enter the name of advertiser : ");
+                                        scanf("%s",producer);
+                                        fprintf(details2,"Name = %s\n",producer );
+
+                                        printf("Enter the  phone no : ");
+                                        scanf("%s",director);
+                                        fprintf(details2,"Phone no = %s\n",director);
+
+                                        printf("Enter the Address : ");
+                                        getchar();
+                                        scanf("%[^\n]s",ba);
+                                        fprintf(details2,"Address = %s\n",ba );
+
+                                        fprintf(details2,"***********************\n");
 
                                         printf("Please Enter the page you want to select : \n1.Inner Page \n2.Front Page \n3.Back Page\n");
                                         printf("Please enter the choice : ");
                                         scanf("%d",&w);
 
+          if(w<0 || w>3)
+        {
+            printf("Invalid");
+            break;
+        }
                                         switch(w)
                                         {
                                             case 1:
@@ -1160,11 +2023,32 @@ for(i=1;i<=16;i++)
                                         printf("Enter the Advertisement : ");
                                         getchar();
                                         scanf("%[^\n]s",addata);
+                                        fprintf(details2,"AD is %s\n",addata);
+
+                                        printf("Enter the name of advertiser : ");
+                                        scanf("%s",producer);
+                                        fprintf(details2,"Name = %s\n",producer );
+
+                                        printf("Enter the  phone no : ");
+                                        scanf("%s",director);
+                                        fprintf(details2,"Phone no = %s\n",director);
+
+                                        printf("Enter the Address : ");
+                                        getchar();
+                                        scanf("%[^\n]s",ba);
+                                        fprintf(details2,"Address = %s\n",ba );
+
+                                        fprintf(details2,"***********************\n");
 
                                         printf("Please Enter the page you want to select : \n1.Inner Page \n2.Front Page \n3.Back Page\n");
                                         printf("Please enter the choice : ");
                                         scanf("%d",&w);
 
+          if(w<0 || w>3)
+        {
+            printf("Invalid");
+            break;
+        }
                                         switch(w)
                                         {
                                             case 1:
@@ -1243,11 +2127,32 @@ for(i=1;i<=16;i++)
                                         printf("Enter the Advertisement : ");
                                         getchar();
                                         scanf("%[^\n]s",addata);
+                                        fprintf(details2,"AD is %s\n",addata);
+
+                                        printf("Enter the name of advertiser : ");
+                                        scanf("%s",producer);
+                                        fprintf(details2,"Name = %s\n",producer );
+
+                                        printf("Enter the  phone no : ");
+                                        scanf("%s",director);
+                                        fprintf(details2,"Phone no = %s\n",director);
+
+                                        printf("Enter the Address : ");
+                                        getchar();
+                                        scanf("%[^\n]s",ba);
+                                        fprintf(details2,"Address = %s\n",ba );
+
+                                        fprintf(details2,"***********************\n");
 
                                         printf("Please Enter the page you want to select : \n1.Inner Page \n2.Front Page \n3.Back Page\n");
                                         printf("Please enter the choice : ");
                                         scanf("%d",&w);
 
+          if(w<0 || w>3)
+        {
+            printf("Invalid");
+            break;
+        }
                                         switch(w)
                                         {
                                             case 1:
@@ -1322,12 +2227,19 @@ for(i=1;i<=16;i++)
                                         break;
                                     }
                     }
+                    fclose(details2);
                     break;
                 }
 
-          case 4:
+          case 8:
                     {
                        fp1= fopen("Data_stored_TimesOfIndia.txt","a+");
+
+                        if(fp1==NULL)
+                        {
+                            printf("Can't open file\n");
+                            break;
+                        }
 
                         i=1;
                         AD *tmp=paper;
@@ -1343,11 +2255,17 @@ for(i=1;i<=16;i++)
                         fclose(fp1);
                     }
                     break;
-          case 5:
+          case 9:
                     {
                         fp2=fopen("Data_stored_Hindu.txt","a+");
 
-                                            {
+                    if(fp2==NULL)
+                        {
+                            printf("Can't open file\n");
+                            break;
+                        }
+
+                    {
                         i=1;
                         AD *tmp=paper1;
                         while(tmp->next!=NULL)
@@ -1362,7 +2280,7 @@ for(i=1;i<=16;i++)
                         fclose(fp2);
                         break;
                     }
-        case 7:
+        case 5:
                      {
                          FILE *f;
                          char word[1000];
@@ -1389,6 +2307,12 @@ for(i=1;i<=16;i++)
                         scanf("%s",dir);
 
                             f=fopen("U1.txt","r");
+                                                if(f==NULL)
+                        {
+                            printf("Can't open file\n");
+                            break;
+                        }
+
                             while(!feof(f))
                             {
                                 fscanf(f,"%s",word);
@@ -1402,6 +2326,11 @@ for(i=1;i<=16;i++)
                             fclose(f);
 
                              f=fopen("U2.txt","r");
+                                                     if(f==NULL)
+                        {
+                            printf("Can't open file\n");
+                            break;
+                        }
                             while(!feof(f))
                             {
                                 fscanf(f,"%s",word);
@@ -1415,6 +2344,11 @@ for(i=1;i<=16;i++)
                             fclose(f);
 
                              f=fopen("U3.txt","r");
+                                  if(f==NULL)
+                        {
+                            printf("Can't open file\n");
+                            break;
+                        }
                             while(!feof(f))
                             {
                                 fscanf(f,"%s",word);
@@ -1428,6 +2362,13 @@ for(i=1;i<=16;i++)
                             fclose(f);
 
                              f=fopen("U4.txt","r");
+
+                                  if(f==NULL)
+                        {
+                            printf("Can't open file\n");
+                            break;
+                        }
+
                             while(!feof(f))
                             {
                                 fscanf(f,"%s",word);
@@ -1441,6 +2382,13 @@ for(i=1;i<=16;i++)
                             fclose(f);
 
                              f=fopen("U5.txt","r");
+
+                                if(f==NULL)
+                        {
+                            printf("Can't open file\n");
+                            break;
+                        }
+
                             while(!feof(f))
                             {
                                 fscanf(f,"%s",word);
@@ -1454,6 +2402,13 @@ for(i=1;i<=16;i++)
                             fclose(f);
 
                              f=fopen("U6.txt","r");
+
+                             if(f==NULL)
+                        {
+                            printf("Can't open file\n");
+                            break;
+                        }
+
                             while(!feof(f))
                             {
                                 fscanf(f,"%s",word);
@@ -1467,6 +2422,12 @@ for(i=1;i<=16;i++)
                             fclose(f);
 
                              f=fopen("U7.txt","r");
+                                  if(f==NULL)
+                        {
+                            printf("Can't open file\n");
+                            break;
+                        }
+
                             while(!feof(f))
                             {
                                 fscanf(f,"%s",word);
@@ -1480,6 +2441,13 @@ for(i=1;i<=16;i++)
                             fclose(f);
 
                              f=fopen("U8.txt","r");
+
+                                  if(f==NULL)
+                        {
+                            printf("Can't open file\n");
+                            break;
+                        }
+
                             while(!feof(f))
                             {
                                 fscanf(f,"%s",word);
@@ -1493,6 +2461,13 @@ for(i=1;i<=16;i++)
                             fclose(f);
 
                              f=fopen("U9.txt","r");
+
+                                  if(f==NULL)
+                        {
+                            printf("Can't open file\n");
+                            break;
+                        }
+
                             while(!feof(f))
                             {
                                 fscanf(f,"%s",word);
@@ -1506,6 +2481,13 @@ for(i=1;i<=16;i++)
                             fclose(f);
 
                              f=fopen("U10.txt","r");
+
+                                  if(f==NULL)
+                        {
+                            printf("Can't open file\n");
+                            break;
+                        }
+
                             while(!feof(f))
                             {
                                 fscanf(f,"%s",word);
@@ -1519,7 +2501,7 @@ for(i=1;i<=16;i++)
                             fclose(f);
                      }
                      break;
-        case 8:
+        case 11:
                 {
                     int choice;
                     printf("Enter the user name whose add is to be displayed :\n");
@@ -1536,6 +2518,11 @@ for(i=1;i<=16;i++)
 
                     scanf("%d",&choice);
 
+      if(choice<0 || choice>300)
+        {
+            printf("Invalid");
+            break;
+        }
                     switch(choice)
                     {
                         case 1:
@@ -1642,13 +2629,29 @@ for(i=1;i<=16;i++)
 
         case 0:     exit(0);
 
-        case 6:
+        case 13:
                     {
                         printf("Deleted all the previous data in the files.\n");
 
                         fp1=fopen("Data_stored_Hindu.txt","w");
+                             if(fp1==NULL)
+                        {
+                            printf("Can't open file\n");
+                            break;
+                        }
+
                         fp2=fopen("Data_stored_TV.txt","w");
+                             if(fp2==NULL)
+                        {
+                            printf("Can't open file\n");
+                            break;
+                        }
                         fp3=fopen("Data_stored_TimesOfIndia.txt","w");
+                             if(fp3==NULL)
+                        {
+                            printf("Can't open file\n");
+                            break;
+                        }
 
                         fclose(fp1);
                         fclose(fp2);
@@ -1656,9 +2659,14 @@ for(i=1;i<=16;i++)
                     }
                     break;
 
-        case 10:
+        case 7:
                     {
                         fp3=fopen("Data_stored_TV.txt","a+");
+                             if(fp3==NULL)
+                        {
+                            printf("Can't open file\n");
+                            break;
+                        }
 
                         fprintf(fp3,"\n%s\n\n", "Today's ads in Television are : ");
 
@@ -1679,7 +2687,9 @@ for(i=1;i<=16;i++)
                         fclose(fp3);
                     }
 
-        case 11:
+                    break;
+
+        case 4:
                 {
                      STACK s1, s2;
                      int choice = 0,flag;
@@ -1698,6 +2708,11 @@ for(i=1;i<=16;i++)
 
                         scanf("%d", &choice);
 
+          if(choice<0 || choice>300)
+        {
+            printf("Invalid");
+            break;
+        }
                         switch(choice)
                         {
                             case 1: printf("\nWelcome to urban oasis mall..\n We are very glad to have you here\n");
@@ -1717,12 +2732,230 @@ for(i=1;i<=16;i++)
                     }
                 }
 
+                break;
+
+        case 6:
+                 {
+                     int adj[V_SIZE][V_SIZE]={0},u,v,choice,range;
+                        //number of vertices
+                        int nv;
+                        //number of edges
+                        int e;
+                        int x;
+                        int adsize;
+
+                        printf("\nEnter the number of people in the area:");
+                        scanf("%d",&nv);
+
+                        printf("Enter the number of connections between people:");
+                        scanf("%d",&e);
+
+                        printf("Enter the connected edges\n");
+                        for (int i=0;i<e;i++)
+                        {
+                            scanf("%d%d",&u,&v);
+                            adj[--u][--v]=1;
+                            adj[v][u]=1;
+                        }
+
+                        printf("Enter the source for bfs:");
+                        int s;
+                        scanf("%d",&s);
+                        BFS(--s,nv,adj);
+
+                        QUEUES ads;
+                        ads.front=0;
+                        ads.rear=-1;
+
+                        printf("\nEnter the number of ads\n");
+                        scanf("%d",&adsize);
+
+                        for(int i=0;i<adsize;i++)
+                            enqueues(&ads);
+
+                        printf("\nEnter the range for broadcasting the ads\n");
+                        scanf("%d",&range);
+                        while(1)
+                        {
+                            printf("Menu\n1.Broadcast the message to the users in within the given range\n2.Update the advertisment\n");
+                            printf("3.Change the range\n4.Add Advertisements\n5.Exit\n");
+
+                            printf("Enter the choice\n");
+                            scanf("%d",&choice);
+
+                            int j;
+
+    if(choice<0 || choice>300)
+        {
+            printf("Invalid");
+            break;
+        }
+                            switch(choice)
+                            {
+                                case 1: for(j=0;j<v&&level[j]<=range;j++)
+                                        {
+                                           printf("Ad displayed to the user %d is  ",j+1);
+                                           seeks(&ads);
+                                           printf("\n");
+                                        }
+
+                                        break;
+
+                                case 2: dequeues(&ads);
+                                        break;
+
+                                case 3: printf("Enter the range for broadcasting the ads\n");
+                                        scanf("%d",&range);
+                                        break;
+
+                                case 4: printf("Enter the number of ads\n");
+                                        scanf("%d",&adsize);
+                                        for(int i=0;i<adsize;i++)
+                                            enqueues(&ads);
+
+                                case 5: exit(0);
+
+                            }
+
+                        }
+                 }
+                 break;
+
+         case 14:
+                 {
+                     int cu;
+                     char adname[50],report[100];
+
+                     FILE *file1,*file2,*file3;
+
+                     printf("Welcome to the report section of the Advertisement\n");
+
+                     while(1)
+                     {
+                         printf("Menu\n1.Report for the ad in newspaper\n2.Report for the ad displayed on television\n");
+
+                         printf("3.Report for the ad in display boards\n4.exit\n");
+
+                         printf("Enter the choice\n");
+                         scanf("%d",&cu);
+
+          if(cu<0 || cu>300)
+        {
+            printf("Invalid");
+            break;
+        }
+                         switch(cu)
+                         {
+                             case 1:
+                                 {
+                                     file1=fopen("Newspaper.txt","a");
+                                     if(file1==NULL)
+                                     {
+                                         printf("File error\n");
+                                         return;
+                                     }
+                                     printf("Enter the ad for which you want to report\n");
+                                     getchar();
+                                     scanf("%[^\n]s",adname);
+
+                                     fprintf(file1,"%s\n",adname);
+                                     printf("Enter the report\n");
+                                     getchar();
+                                     scanf("%[^\n]s",report);
+
+                                     fprintf(file1,"%s\n",report);
+                                     printf("Thank you for your valuable feedback\n");
+
+                                     fprintf(file1,"**********************\n");
+
+                                    fclose(file1);
+                                    break;
+                                 }
+                            case 2:
+                                 {
+                                     file2=fopen("TV.txt","a");
+                                     if(file2==NULL)
+                                     {
+                                         printf("File error\n");
+                                         return;
+                                     }
+                                     printf("Enter the ad for which you want to report\n");
+                                     getchar();
+                                     scanf("%[^\n]s",adname);
+
+                                     fprintf(file2,"%s\n",adname);
+                                     printf("Enter the report\n");
+                                     getchar();
+                                     scanf("%[^\n]s",report);
+
+                                     fprintf(file2,"%s\n",report);
+
+                                     printf("Thank you for your valuable feedback\n");
+
+                                     fprintf(file2,"**********************\n");
+
+                                    fclose(file2);
+                                    break;
+                                 }
+                             case 3:
+                                 {
+                                     file3=fopen("Display Boards.txt","a");
+                                     if(file3==NULL)
+                                     {
+                                         printf("File error\n");
+                                         return;
+                                     }
+                                     printf("Enter the ad for which you want to report\n");
+                                     getchar();
+                                     scanf("%[^\n]s",adname);
+
+                                     fprintf(file3,"%s\n",adname);
+                                     printf("Enter the report\n");
+                                     getchar();
+                                     scanf("%[^\n]s",report);
+
+                                     fprintf(file3,"%s\n",report);
+                                     printf("Thank you for your valuable feedback\n\n");
+
+                                     fprintf(file3,"**********************\n");
+
+                                    fclose(file3);
+                                    break;
+                                 }
+                           case 4: exit(0);
+
+                         }
+                     }
+
+                }
+
+                 break;
+
+          case 12:
+                {
+                    NODE * start;
+                    start = NULL;
+                    int rule,iter;
+                    char content[50];
+                    printf("Enter the number of ads\n");
+                    scanf("%d",&rule);
+                    for(iter=0;iter<rule;iter++)
+                    {
+                        start=insert_at_end(start);
+                    }
+                    display_list(start);
+                    break;
+                }
+
+
         }
     }
 }
+
 catch(. . .)
 {
      printf("Invalid Input");
 }
     return 0;
 }
+
