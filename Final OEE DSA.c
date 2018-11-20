@@ -30,6 +30,8 @@ int c,size;
 int a[MAX];
 int level[V_SIZE];
 
+//Defining structure node
+
 struct node
 {
     char info[50];
@@ -37,7 +39,10 @@ struct node
     struct node *prev;
 };
 typedef struct node NODE;
+
 int currnode = 0;
+
+//Defining structure dqueue
 
 struct dqueue
 {
@@ -46,6 +51,8 @@ struct dqueue
     int data[MAX_QUEUE];
 
 };
+
+//Defining structure squeue
 
 struct squeue
 {
@@ -58,11 +65,15 @@ typedef struct squeue QUEUES;
 
 typedef struct dqueue QUEUED;
 
+//Defining structure message
+
 struct message
 {
     char message_data[100];
     int hour[2];
 };
+
+//Defining stack
 
 struct stack
 {
@@ -73,6 +84,8 @@ struct stack
 
 typedef struct stack STACK;
 
+//Defining structure ad
+
 struct ad
 {
     char data[1000];
@@ -80,6 +93,8 @@ struct ad
 };
 
 typedef struct ad AD;
+
+//Defining structure news_variables
 
 struct news_variables
 {
@@ -90,6 +105,13 @@ struct news_variables
 
 typedef struct news_variables NV;
 
+/*
+ Function Name:Node*getnode
+Input Params: Nothing
+Return Type: Structure
+Description:Creates a newnode and returns
+ */
+
 NODE * getnode()
 {
     NODE * newnode;
@@ -99,6 +121,12 @@ NODE * getnode()
     return newnode;
 }
 
+/*
+ Function Name:Void getdata
+Input Params: NODE*newnode
+Return Type: Void
+Description:Takes data from user input into newnode
+ */
 
 void getdata(NODE * newnode)
 {
@@ -109,6 +137,12 @@ void getdata(NODE * newnode)
     newnode->prev = NULL;
 }
 
+/*
+ Function Name:NODE * insert_at_front
+Input Params: NODE*start
+Return Type: Structure
+Description:Insert newnode value into the linked list from front
+ */
 
 NODE * insert_at_front(NODE * start)
 {
@@ -130,6 +164,12 @@ NODE * insert_at_front(NODE * start)
     return start;
 }
 
+/*
+ Function Name:NODE * insert_at_end
+Input Params: NODE*start
+Return Type: Structure
+Description:Insert newnode value into the linked list at the end
+ */
 
 NODE * insert_at_end(NODE * start)
 {
@@ -153,6 +193,12 @@ NODE * insert_at_end(NODE * start)
     return start;
 }
 
+/*
+ Function Name:NODE * insert_at_position
+Input Params: NODE*start
+Return Type: Structure
+Description:Insert newnode value into the linked list at required position
+ */
 
 NODE * insert_at_position(NODE * start)
 {
@@ -200,6 +246,12 @@ NODE * insert_at_position(NODE * start)
         return start;
 }
 
+/*
+ Function Name:NODE * delete_from_start
+Input Params: NODE*start
+Return Type: Structure
+Description:Delete data from linked list from start
+ */
 
 NODE * delete_from_start(NODE * start)
 {
@@ -226,6 +278,12 @@ NODE * delete_from_start(NODE * start)
     return start;
 }
 
+/*
+ Function Name:NODE * delete_from_end
+Input Params: NODE*start
+Return Type: Structure
+Description:Delete data from linked list from end
+ */
 
 NODE * delete_from_end( NODE * start)
 {
@@ -255,6 +313,12 @@ NODE * delete_from_end( NODE * start)
     return start;
 }
 
+/*
+ Function Name:NODE * delete_from_position
+Input Params: NODE*start
+Return Type: Structure
+Description:Delete data from linked list from required position
+ */
 
 NODE * delete_from_position(NODE * start)
 {
@@ -312,6 +376,12 @@ NODE * delete_from_position(NODE * start)
     return start;
 }
 
+/*
+ Function Name:Display_list
+Input Params: NODE*start
+Return Type: Void
+Description:Display the content of list
+ */
 
 void display_list(NODE * start)
 {
@@ -345,6 +415,13 @@ void display_list(NODE * start)
     }
     }
 }
+
+/*
+ Function Name:Initialize_stacks
+Input Params:STACK *ps1, STACK *ps2
+Return Type: Void
+Description:Intializes the queue through initialising it's components
+ */
 
 void initialize_stacks(STACK *ps1, STACK *ps2)
 {
@@ -380,6 +457,12 @@ void initialize_stacks(STACK *ps1, STACK *ps2)
     }
 
 }
+/*
+ Function Name:empty
+Input Params:STACK *ps
+Return Type: Int
+Description:Return the value if stack is empty
+ */
 
 int empty(STACK *ps)
 {
@@ -390,10 +473,10 @@ int empty(STACK *ps)
 }
 
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name:Message pop
+Input Params: Stack pointer *ps
+Return Type: Structure s
+Description:Does pop function
  */
 
 struct message pop(STACK *ps)
@@ -406,11 +489,12 @@ struct message pop(STACK *ps)
     return s;
 }
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name: View_current_message
+Input Params: Stack pointer *ps1,stack pointer *ps2
+Return Type: Void
+Description:Views current message in the stack
  */
+
 
 void view_current_message(STACK *ps1, STACK *ps2)
 {
@@ -423,10 +507,10 @@ void view_current_message(STACK *ps1, STACK *ps2)
 
 }
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name: Update hour
+Input Params: Stack pointer *ps1 and *ps2
+Return Type: Void
+Description: Updates time
  */
 
 void update_hour(STACK *ps1, STACK *ps2)
@@ -465,10 +549,10 @@ void update_hour(STACK *ps1, STACK *ps2)
 
 }
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name: Push
+Input Params: Stack pointer *ps and structure variable message s
+Return Type: Void
+Description: It does push function
  */
 void push(STACK * ps, struct message s)
 
@@ -485,10 +569,10 @@ void push(STACK * ps, struct message s)
 }
 
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name: Peek
+Input Params: Stack pointer *ps
+Return Type: Void
+Description:Prints peek value of the stack
  */
 void peek( STACK *ps)
 {
@@ -500,10 +584,10 @@ void peek( STACK *ps)
     return;
 }
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name:Print
+Input Params: Stack pointer *ps1 and *ps2
+Return Type: Void
+Description: Elements of stack are being printed
  */
 
 void print( STACK *ps1, STACK *ps2)
@@ -553,11 +637,12 @@ void print( STACK *ps1, STACK *ps2)
     }
 }
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name: AD*append
+Input Params: AD * start,char data[],int position
+Return Type: Structure pointer
+Description:Appends data into the structure
  */
+
 
 AD *append(AD * start,char data[],int position)
 {
@@ -576,10 +661,10 @@ AD *append(AD * start,char data[],int position)
    return start;
 }
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name:AD *displayNTimes
+Input Params: AD * start,int n,char content[]
+Return Type: Structure pointer
+Description: Displaying function
  */
 AD *displayNTimes(AD * start,int n,char content[])
 {
@@ -604,10 +689,10 @@ AD *displayNTimes(AD * start,int n,char content[])
     return start;
 }
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name: AD * InsertNth
+Input Params: AD * start,char data[],int position
+Return Type: Structure
+Description:Does newly created  node insertion function
  */
  AD * InsertNth(AD * start,char data[],int position)
  {
@@ -660,10 +745,10 @@ Description: Recursively visits the tree in the order of Left, Right, Root
     return start;
 }
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name: Centerstring
+Input Params: Character pointer *s
+Return Type: Void
+Description: Prints string at the center
  */
 void centerstring(char *s)
 {
@@ -677,10 +762,7 @@ void centerstring(char *s)
 
 }
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Defining structure queue
  */
 struct queue
 {
@@ -693,10 +775,10 @@ struct queue
 
 typedef struct queue QUEUE;
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name: Empty1
+Input Params: Queue pointer *q
+Return Type: Integer
+Description: Checks queue is empty or not
  */
 int empty1(QUEUE *q)
 {
@@ -706,10 +788,10 @@ int empty1(QUEUE *q)
         return FALSE;
 }
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name: Full1
+Input Params: Queue pointer q
+Return Type: Integer
+Description:Checks queue is full or not
  */
 int full1(QUEUE *q)
 {
@@ -721,10 +803,10 @@ int full1(QUEUE *q)
 
 }
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name:Enqueue
+Input Params: Queue pointer,input items
+Return Type: Void
+Description:Adds elements to the queue
  */
 void enqueue(QUEUE *q,char item[1000])
 {
@@ -741,10 +823,10 @@ void enqueue(QUEUE *q,char item[1000])
 
 }
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name: Delay
+Input Params: Time in sec
+Return Type: Void
+Description: Time starts for a diplaying perticuler message
  */
 void delay(int sec)
 {
@@ -755,10 +837,10 @@ void delay(int sec)
         ;
 }
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name:isEmptyd
+Input Params: Queue pointer *pq
+Return Type: Integer
+Description: Check empty or not
  */
 int isEmptyd(QUEUED *pq)
 {
@@ -766,20 +848,20 @@ int isEmptyd(QUEUED *pq)
 }
 
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name:isEmptys
+Input Params: Queue pointer *pq
+Return Type: Integer
+Description: Check empty or not
  */
 int isEmptys(QUEUES *pq)
 {
     return (pq->front>pq->rear);
 }
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name: Isfulld
+Input Params: Queue pointer *pq
+Return Type: Integer
+Description:Check queue is full or not
  */
 
 int isFulld(QUEUED *pq)
@@ -788,20 +870,22 @@ int isFulld(QUEUED *pq)
 }
 
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name: Isfulls
+Input Params: Queue pointer *pq
+Return Type: Integer
+Description:Check queue is full or not
  */
+
+
 int isFulls(QUEUES *pq)
 {
     return (pq->rear==MAX_QUEUE);
 }
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name: Enqueued
+Input Params: Queue pointer *pq,int data
+Return Type: Void
+Description:Elements are stored into the queue
  */
 
 void enqueued(QUEUED *pq,int data)
@@ -819,10 +903,10 @@ void enqueued(QUEUED *pq,int data)
     }
 }
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name:Enqueues
+Input Params:Queue pointer *pq
+Return Type: Void
+Description: Element will be added into the queue
  */
 void enqueues(QUEUES *pq)
 {
@@ -846,10 +930,10 @@ void enqueues(QUEUES *pq)
 }
 
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name:Dequeued
+Input Params: Queue pointer *pq
+Return Type: Int
+Description: Element dequeued from the queue
  */
 int dequeued(QUEUED *pq)
 {
@@ -871,10 +955,10 @@ int dequeued(QUEUED *pq)
 }
 
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name:Dequeues
+Input Params: Queue pointer *pq
+Return Type: Void
+Description: Element dequeued from the queue
  */
 void dequeues(QUEUES *pq)
 {
@@ -891,10 +975,10 @@ void dequeues(QUEUES *pq)
     }
 }
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name:Seeks
+Input Params: Queue pointer *pq
+Return Type: Void
+Description: Gives seek value of  the queue
  */
 void seeks(QUEUES *pq)
 {
@@ -911,10 +995,10 @@ void seeks(QUEUES *pq)
 
 }
 /*
- Function Name: message pop
-Input Params: stack pointer *ps
-Return Type: void
-Description: Recursively visits the tree in the order of Left, Right, Root
+ Function Name:BFS
+Input Params: Int s,int v,int adj[][V_SIZE]
+Return Type: Void
+Description: BFS operations are done here
  */
 void BFS(int s,int v,int adj[][V_SIZE])
 {
@@ -934,11 +1018,12 @@ void BFS(int s,int v,int adj[][V_SIZE])
     vis[s]=1;
     level[s]=0;
     //printf("%d",isEmpty(&q));
+
     while(!isEmptyd(&q))
     {
-
         int curr=dequeued(&q);
         printf("%d",curr+1);
+
         for(int i=0;i<v;i++)
         {
             if(adj[curr][i]==1 && !vis[i])
@@ -951,7 +1036,9 @@ void BFS(int s,int v,int adj[][V_SIZE])
         }
     }
     for(int i=0;i<v;i++)
-        printf("%d\n",level[i]);
+     {
+         printf("%d\n",level[i]);
+     }
 }
 
 int main()
@@ -971,7 +1058,9 @@ try
 
     char producer[100],director[100],ba[100];
 
-    QUEUE q1,q2,q3,q4,q5,q6,q7,q8,q9,q10;
+    QUEUE q1,q2,q3,q4,q5;
+
+    QUEUE q6,q7,q8,q9,q10;
 
     q1.front=0;
     q1.rear=-1;
@@ -1008,7 +1097,9 @@ try
     char addata[1000];
 
     for(i=0;i<MAX;i++)
-        a[i]=0;
+     {
+         a[i]=0;
+     }
 
     AD *start=NULL;
     AD *paper=NULL;
@@ -1017,13 +1108,19 @@ try
     NV news1,news2;
 
 for(i=1;i<=MAX;i++)
-        start=InsertNth(start,"Currently No Ad",i);
+       {
+           start=InsertNth(start,"Currently No Ad",i);
+       }
 
 for(i=1;i<=26;i++)
-        paper=InsertNth(paper,"Currently No Ad",i);
+      {
+          paper=InsertNth(paper,"Currently No Ad",i);
+      }
 
 for(i=1;i<=16;i++)
-        paper1=InsertNth(paper1,"Currently No Ad",i);
+        {
+            paper1=InsertNth(paper1,"Currently No Ad",i);
+        }
 
     news1.p=2;
     news2.p=2;
@@ -1082,14 +1179,17 @@ Description: Recursively visits the tree in the order of Left, Right, Root
                         printf("Enter the advertisement : ");
                         getchar();
                         scanf("%[^\n]s",addata);
+
                         fprintf(details,"AD is %s\n",addata);
 
                         printf("Enter the Producer of ad : ");
                         scanf("%s",producer);
+
                         fprintf(details,"Producer = %s\n",producer );
 
                         printf("Enter the Director of ad : ");
                         scanf("%s",director);
+
                         fprintf(details,"Director = %s\n",director);
 
                         printf("Enter the Brand Ambassador : ");
@@ -1128,7 +1228,6 @@ Description: Recursively visits the tree in the order of Left, Right, Root
                             start=displayNTimes(start,n,addata);
 
 
-
                             printf("Your Add will be displayed for %d minutes today.\n",n);
                             break;
                         }
@@ -1153,6 +1252,11 @@ Description: Recursively visits the tree in the order of Left, Right, Root
         }
 
           details1=fopen("Times of India ads.txt","a+");
+             if(details1==NULL)
+                        {
+                            printf("Can't open file\n");
+                            break;
+                        }
 
                          switch(c)
                         {
@@ -1203,6 +1307,7 @@ Description: Recursively visits the tree in the order of Left, Right, Root
                                                             printf("The charges of ad in Matrimonial for Inner page is %d rupees\n",size*735);
                                                             printf("Are you ready to pay the charges :\n1.Yes\n0.No\n");
                                                             scanf("%d",&i);
+
                                                             if(i==1)
                                                             {
                                                                 printf("Your ad is published.\n");
@@ -1210,7 +1315,9 @@ Description: Recursively visits the tree in the order of Left, Right, Root
                                                                 news1.p++;
                                                             }
                                                             else
-                                                                printf("Failed to publish your add\n");
+                                                               {
+                                                                   printf("Failed to publish your add\n");
+                                                               }
                                                         }
                                                         break;
                                              case 2:
@@ -1220,6 +1327,7 @@ Description: Recursively visits the tree in the order of Left, Right, Root
 
                                                             printf("Enter the size of ad in sq cms :");
                                                             scanf("%d",&size);
+
                                                             printf("The charges of ad in Matrimonial for Front page is %d rupees\n",size*800);
                                                             printf("Are you ready to pay the charges :\n1.Yes\n0.No\n");
                                                             scanf("%d",&i);
@@ -1245,6 +1353,7 @@ Description: Recursively visits the tree in the order of Left, Right, Root
 
                                                             printf("Enter the size of ad in sq cms :");
                                                             scanf("%d",&size);
+
                                                             printf("The charges of ad in Matrimonial for Back page is %d rupees\n",size*760);
                                                             printf("Are you ready to pay the charges :\n1.Yes\n0.No\n");
                                                             scanf("%d",&i);
@@ -1267,6 +1376,7 @@ Description: Recursively visits the tree in the order of Left, Right, Root
                                         printf("Enter the Advertisement : ");
                                         getchar();
                                         scanf("%[^\n]s",addata);
+
                                         fprintf(details1,"AD is %s\n",addata);
 
                                         printf("Enter the name of advertiser : ");
@@ -1428,9 +1538,11 @@ Description: Recursively visits the tree in the order of Left, Right, Root
                                                         {
                                                             printf("Enter the size of ad in sq cms :");
                                                             scanf("%d",&size);
+
                                                             printf("The charges of ad in Services for Front page is %d rupees\n",size*149);
                                                             printf("Are you ready to pay the charges :\n1.Yes\n0.No\n");
                                                             scanf("%d",&i);
+
                                                             if(i==1)
                                                             {
                                                                 printf("Your ad is published.\n");
@@ -1452,9 +1564,11 @@ Description: Recursively visits the tree in the order of Left, Right, Root
                                                         {
                                                             printf("Enter the size of ad in sq cms :");
                                                             scanf("%d",&size);
+
                                                             printf("The charges of ad in Services for Back page is %d rupees\n",size*95);
                                                             printf("Are you ready to pay the charges :\n1.Yes\n0.No\n");
                                                             scanf("%d",&i);
+
                                                             if(i==1)
                                                             {
                                                                 printf("Your ad is published.\n");
@@ -1558,9 +1672,11 @@ Description: Recursively visits the tree in the order of Left, Right, Root
                                                         {
                                                             printf("Enter the size of ad in sq cms :");
                                                             scanf("%d",&size);
+
                                                             printf("The charges of ad in Education for Back page is %d rupees\n",size*820);
                                                             printf("Are you ready to pay the charges :\n1.Yes\n0.No\n");
                                                             scanf("%d",&i);
+
                                                             if(i==1)
                                                             {
                                                                 printf("Your ad is published.\n");
@@ -1637,9 +1753,11 @@ Description: Recursively visits the tree in the order of Left, Right, Root
                                                         {
                                                             printf("Enter the size of ad in sq cms :");
                                                             scanf("%d",&size);
+
                                                             printf("The charges of ad for Front page is %d rupees\n",size*200);
                                                             printf("Are you ready to pay the charges :\n1.Yes\n0.No\n");
                                                             scanf("%d",&i);
+
                                                             if(i==1)
                                                             {
                                                                 printf("Your ad is published.\n");
@@ -1661,9 +1779,11 @@ Description: Recursively visits the tree in the order of Left, Right, Root
                                                         {
                                                             printf("Enter the size of ad in sq cms :");
                                                             scanf("%d",&size);
+
                                                             printf("The charges of ad for Back page is %d rupees\n",size*185);
                                                             printf("Are you ready to pay the charges :\n1.Yes\n0.No\n");
                                                             scanf("%d",&i);
+
                                                             if(i==1)
                                                             {
                                                                 printf("Your ad is published.\n");
@@ -1703,6 +1823,11 @@ Description: Recursively visits the tree in the order of Left, Right, Root
         }
 
         details2=fopen("The Hindu ads.txt","a+");
+           if(details2==NULL)
+                        {
+                            printf("Can't open file\n");
+                            break;
+                        }
 
                         switch(c)
                         {
@@ -1753,6 +1878,7 @@ Description: Recursively visits the tree in the order of Left, Right, Root
                                                             printf("The charges of ad in property for Inner page is %d rupees\n",size*70);
                                                             printf("Are you ready to pay the charges :\n1.Yes\n0.No\n");
                                                             scanf("%d",&i);
+
                                                             if(i==1)
                                                             {
                                                                 printf("Your ad is published.\n");
@@ -1770,9 +1896,11 @@ Description: Recursively visits the tree in the order of Left, Right, Root
 
                                                             printf("Enter the size of ad in sq cms :");
                                                             scanf("%d",&size);
+
                                                             printf("The charges of ad in property for Front page is %d rupees\n",size*125);
                                                             printf("Are you ready to pay the charges :\n1.Yes\n0.No\n");
                                                             scanf("%d",&i);
+
                                                             if(i==1)
                                                             {
                                                                 printf("Your ad is published.\n");
@@ -1795,9 +1923,11 @@ Description: Recursively visits the tree in the order of Left, Right, Root
 
                                                             printf("Enter the size of ad in sq cms :");
                                                             scanf("%d",&size);
+
                                                             printf("The charges of ad in property for Back page is %d rupees\n",size*95);
                                                             printf("Are you ready to pay the charges :\n1.Yes\n0.No\n");
                                                             scanf("%d",&i);
+
                                                             if(i==1)
                                                             {
                                                                 printf("Your ad is published.\n");
@@ -1897,9 +2027,11 @@ Description: Recursively visits the tree in the order of Left, Right, Root
                                                         {
                                                             printf("Enter the size of ad in sq cms :");
                                                             scanf("%d",&size);
+
                                                             printf("The charges of ad in Empower for Back page is %d rupees\n",size*95);
                                                             printf("Are you ready to pay the charges :\n1.Yes\n0.No\n");
                                                             scanf("%d",&i);
+
                                                             if(i==1)
                                                             {
                                                                 printf("Your ad is published.\n");
@@ -1960,6 +2092,7 @@ Description: Recursively visits the tree in the order of Left, Right, Root
                                                             printf("The charges of ad in Tender for Inner page is %d rupees\n",size*70);
                                                             printf("Are you ready to pay the charges :\n1.Yes\n0.No\n");
                                                             scanf("%d",&i);
+
                                                             if(i==1)
                                                             {
                                                                 printf("Your ad is published.\n");
@@ -1977,9 +2110,11 @@ Description: Recursively visits the tree in the order of Left, Right, Root
                                                         {
                                                             printf("Enter the size of ad in sq cms :");
                                                             scanf("%d",&size);
+
                                                             printf("The charges of ad in Tender for Front page is %d rupees\n",size*125);
                                                             printf("Are you ready to pay the charges :\n1.Yes\n0.No\n");
                                                             scanf("%d",&i);
+
                                                             if(i==1)
                                                             {
                                                                 printf("Your ad is published.\n");
@@ -2001,9 +2136,11 @@ Description: Recursively visits the tree in the order of Left, Right, Root
                                                         {
                                                             printf("Enter the size of ad in sq cms :");
                                                             scanf("%d",&size);
+
                                                             printf("The charges of ad in Tender for Back page is %d rupees\n",size*95);
                                                             printf("Are you ready to pay the charges :\n1.Yes\n0.No\n");
                                                             scanf("%d",&i);
+
                                                             if(i==1)
                                                             {
                                                                 printf("Your ad is published.\n");
@@ -2064,6 +2201,7 @@ Description: Recursively visits the tree in the order of Left, Right, Root
                                                             printf("The charges of ad in Automobile for Inner page is %d rupees\n",size*70);
                                                             printf("Are you ready to pay the charges :\n1.Yes\n0.No\n");
                                                             scanf("%d",&i);
+
                                                             if(i==1)
                                                             {
                                                                 printf("Your ad is published.\n");
@@ -2081,9 +2219,11 @@ Description: Recursively visits the tree in the order of Left, Right, Root
                                                         {
                                                             printf("Enter the size of ad in sq cms :");
                                                             scanf("%d",&size);
+
                                                             printf("The charges of ad in Automobile for Front page is %d rupees\n",size*125);
                                                             printf("Are you ready to pay the charges :\n1.Yes\n0.No\n");
                                                             scanf("%d",&i);
+
                                                             if(i==1)
                                                             {
                                                                 printf("Your ad is published.\n");
@@ -2105,9 +2245,11 @@ Description: Recursively visits the tree in the order of Left, Right, Root
                                                         {
                                                             printf("Enter the size of ad in sq cms :");
                                                             scanf("%d",&size);
+
                                                             printf("The charges of ad in Automobile for Back page is %d rupees\n",size*95);
                                                             printf("Are you ready to pay the charges :\n1.Yes\n0.No\n");
                                                             scanf("%d",&i);
+
                                                             if(i==1)
                                                             {
                                                                 printf("Your ad is published.\n");
@@ -2185,9 +2327,11 @@ Description: Recursively visits the tree in the order of Left, Right, Root
                                                         {
                                                             printf("Enter the size of ad in sq cms :");
                                                             scanf("%d",&size);
+
                                                             printf("The charges of ad for Front page is %d rupees\n",size*125);
                                                             printf("Are you ready to pay the charges :\n1.Yes\n0.No\n");
                                                             scanf("%d",&i);
+
                                                             if(i==1)
                                                             {
                                                                 printf("Your ad is published.\n");
@@ -2209,9 +2353,11 @@ Description: Recursively visits the tree in the order of Left, Right, Root
                                                         {
                                                             printf("Enter the size of ad in sq cms :");
                                                             scanf("%d",&size);
+
                                                             printf("The charges of ad for Back page is %d rupees\n",size*95);
                                                             printf("Are you ready to pay the charges :\n1.Yes\n0.No\n");
                                                             scanf("%d",&i);
+
                                                             if(i==1)
                                                             {
                                                                 printf("Your ad is published.\n");
@@ -2751,6 +2897,7 @@ Description: Recursively visits the tree in the order of Left, Right, Root
                         scanf("%d",&e);
 
                         printf("Enter the connected edges\n");
+
                         for (int i=0;i<e;i++)
                         {
                             scanf("%d%d",&u,&v);
