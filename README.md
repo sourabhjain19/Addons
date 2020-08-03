@@ -1,2 +1,2 @@
-# DSA Course Project
-### Addons using C
+# Addons
+### DSA Course Project
